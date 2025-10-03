@@ -1,4 +1,4 @@
-# Backend Dockerfile
+# Backend Dockerfile for Render
 FROM python:3.11-slim
 
 WORKDIR /app
@@ -18,6 +18,7 @@ COPY . .
 # Create necessary directories
 RUN mkdir -p uploads vector_db
 
-EXPOSE 8000
+# Use PORT environment variable from Render
+EXPOSE $PORT
 
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+CMD uvicorn main:app --host 0.0.0.0 --port $PORT
