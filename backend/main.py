@@ -14,14 +14,13 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# Add CORS middleware
+# Add CORS middleware - Permissive for testing
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.ALLOWED_ORIGINS,
-    allow_credentials=True,
-    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_origins=["*"],  # Allow all origins temporarily
+    allow_credentials=False,  # Must be False when allow_origins=["*"]
+    allow_methods=["*"],
     allow_headers=["*"],
-    allow_origin_regex="https://.*\.netlify\.app",
 )
 
 # Include API routes
