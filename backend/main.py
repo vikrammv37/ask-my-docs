@@ -12,12 +12,17 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# Add CORS middleware - Permissive for testing
+# Add CORS middleware - Fix for Netlify frontend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allow all origins temporarily
-    allow_credentials=False,  # Must be False when allow_origins=["*"]
-    allow_methods=["*"],
+    allow_origins=[
+        "https://askyourdocs.netlify.app",  # Production frontend
+        "http://localhost:3000",            # Dev frontend
+        "http://localhost:5173",            # Vite dev server
+        "*"                                 # Allow all for debugging
+    ],
+    allow_credentials=False,
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
 )
 
@@ -60,6 +65,18 @@ async def debug_all_routes():
         if hasattr(route, 'methods') and hasattr(route, 'path'):
             routes.append({"path": route.path, "methods": list(route.methods)})
     return {"available_routes": routes}
+
+@app.options("/api/v1/documents/upload")
+async def upload_options():
+    """Handle CORS preflight for upload endpoint"""
+    return Response(
+        status_code=200,
+        headers={
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "POST, OPTIONS",
+            "Access-Control-Allow-Headers": "Content-Type",
+        }
+    )
 
 @app.post("/api/v1/documents/upload")
 async def upload_document(file: UploadFile = File(...)):
