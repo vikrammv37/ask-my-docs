@@ -34,7 +34,7 @@ async def root():
 
 @app.get("/health")
 async def health_check():
-    return {"status": "healthy", "version": "1.0.2", "deployment": "debug"}
+    return {"status": "healthy", "version": "1.0.3", "deployment": "router-fix"}
 
 @app.get("/check-env")
 async def check_environment():
