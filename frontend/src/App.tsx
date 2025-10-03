@@ -23,8 +23,8 @@ const App: React.FC = () => {
             },
             success: {
               duration: 3000,
-              theme: {
-                primary: '#4aed88',
+              style: {
+                background: '#4aed88',
               },
             },
           }}

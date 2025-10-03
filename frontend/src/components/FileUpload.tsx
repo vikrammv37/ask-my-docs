@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { DocumentArrowUpIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { DocumentArrowUpIcon } from '@heroicons/react/24/outline';
 import { documentService } from '../services/api';
 import toast from 'react-hot-toast';
 
