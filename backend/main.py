@@ -29,7 +29,7 @@ async def root():
 
 @app.get("/health")
 async def health_check():
-    return {"status": "healthy", "version": "1.0.0"}
+    return {"status": "healthy", "version": "1.0.1", "deployment": "latest"}
 
 @app.post("/api/v1/documents/upload")
 async def upload_document(file: UploadFile = File(...)):
