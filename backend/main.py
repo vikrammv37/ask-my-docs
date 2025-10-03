@@ -1,4 +1,4 @@
-from fastapi import FastAPI, File, UploadFile, HTTPException, Depends, Request
+from fastapi import FastAPI, File, UploadFile, HTTPException, Depends, Request, APIRouter
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from fastapi.responses import Response
@@ -66,7 +66,10 @@ async def debug_all_routes():
             routes.append({"path": route.path, "methods": list(route.methods)})
     return {"available_routes": routes}
 
-@app.options("/api/v1/documents/upload")
+# Create a router for API v1 routes
+api_v1_router = APIRouter(prefix="/api/v1")
+
+@api_v1_router.options("/documents/upload")
 async def upload_options():
     """Handle CORS preflight for upload endpoint"""
     return Response(
@@ -78,7 +81,7 @@ async def upload_options():
         }
     )
 
-@app.post("/api/v1/documents/upload")
+@api_v1_router.post("/documents/upload")
 async def upload_document(file: UploadFile = File(...)):
     """Upload and process a document for Q&A"""
     try:
@@ -128,7 +131,7 @@ async def upload_document(file: UploadFile = File(...)):
             detail=f"Failed to process document: {str(e)}"
         )
 
-@app.post("/api/v1/query")
+@api_v1_router.post("/query")
 async def query_documents(query_request: dict):
     """Query processed documents"""
     try:
@@ -164,6 +167,9 @@ async def query_documents(query_request: dict):
             status_code=500,
             detail=f"Query failed: {str(e)}"
         )
+
+# Register the API v1 router
+app.include_router(api_v1_router)
 
 if __name__ == "__main__":
     import os
