@@ -80,10 +80,8 @@ async def debug_all_routes():
             routes.append({"path": route.path, "methods": list(route.methods)})
     return {"available_routes": routes}
 
-# Create a router for API v1 routes
-api_v1_router = APIRouter(prefix="/api/v1")
-
-@api_v1_router.options("/documents/upload")
+# Direct route registration (simpler, more reliable)
+@app.options("/api/v1/documents/upload")
 async def upload_options():
     """Handle CORS preflight for upload endpoint"""
     return Response(
@@ -95,7 +93,7 @@ async def upload_options():
         }
     )
 
-@api_v1_router.post("/documents/upload")
+@app.post("/api/v1/documents/upload")
 async def upload_document(file: UploadFile = File(...)):
     """Upload and process a document for Q&A"""
     try:
@@ -145,7 +143,7 @@ async def upload_document(file: UploadFile = File(...)):
             detail=f"Failed to process document: {str(e)}"
         )
 
-@api_v1_router.post("/query")
+@app.post("/api/v1/query")
 async def query_documents(query_request: dict):
     """Query processed documents"""
     try:
@@ -182,8 +180,7 @@ async def query_documents(query_request: dict):
             detail=f"Query failed: {str(e)}"
         )
 
-# Register the API v1 router
-app.include_router(api_v1_router)
+# Routes are now registered directly on the app
 
 if __name__ == "__main__":
     import os
