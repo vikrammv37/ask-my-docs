@@ -10,9 +10,34 @@ import time
 
 router = APIRouter()
 
-# Initialize services
-document_service = DocumentService()
-query_service = QueryService()
+@router.get("/test")
+async def test_endpoint():
+    """Test endpoint to verify API is working"""
+    return {"message": "API is working!", "timestamp": datetime.now()}
+
+# Initialize services lazily to avoid startup errors
+document_service = None
+query_service = None
+
+def get_document_service():
+    global document_service
+    if document_service is None:
+        try:
+            document_service = DocumentService()
+        except Exception as e:
+            print(f"Error initializing DocumentService: {e}")
+            raise HTTPException(status_code=500, detail=f"Service initialization failed: {str(e)}")
+    return document_service
+
+def get_query_service():
+    global query_service
+    if query_service is None:
+        try:
+            query_service = QueryService()
+        except Exception as e:
+            print(f"Error initializing QueryService: {e}")
+            raise HTTPException(status_code=500, detail=f"Service initialization failed: {str(e)}")
+    return query_service
 
 @router.post("/documents/upload", response_model=DocumentUploadResponse)
 async def upload_document(file: UploadFile = File(...)):
@@ -20,15 +45,18 @@ async def upload_document(file: UploadFile = File(...)):
     start_time = time.time()
     
     try:
+        # Get service instance
+        doc_service = get_document_service()
+        
         # Validate file
-        if not document_service.validate_file(file):
+        if not doc_service.validate_file(file):
             raise HTTPException(
                 status_code=400, 
                 detail="Invalid file type or size"
             )
         
         # Process document
-        result = await document_service.process_document(file)
+        result = await doc_service.process_document(file)
         processing_time = time.time() - start_time
         
         return DocumentUploadResponse(
@@ -52,7 +80,10 @@ async def query_documents(query_request: QueryRequest):
     start_time = time.time()
     
     try:
-        result = await query_service.query(
+        # Get service instance
+        q_service = get_query_service()
+        
+        result = await q_service.query(
             question=query_request.question,
             document_id=query_request.document_id,
             max_results=query_request.max_results
@@ -78,7 +109,8 @@ async def query_documents(query_request: QueryRequest):
 async def list_documents():
     """List all processed documents"""
     try:
-        documents = await document_service.list_documents()
+        doc_service = get_document_service()
+        documents = await doc_service.list_documents()
         return {"documents": documents}
     except Exception as e:
         raise HTTPException(
@@ -90,7 +122,8 @@ async def list_documents():
 async def delete_document(document_id: str):
     """Delete a processed document"""
     try:
-        result = await document_service.delete_document(document_id)
+        doc_service = get_document_service()
+        result = await doc_service.delete_document(document_id)
         return {"message": "Document deleted successfully", "document_id": document_id}
     except Exception as e:
         raise HTTPException(
