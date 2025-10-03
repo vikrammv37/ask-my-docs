@@ -36,6 +36,9 @@ export const documentService = {
     const formData = new FormData();
     formData.append('file', file);
     
+    console.log('Uploading to:', `${API_BASE_URL}/api/v1/documents/upload`);
+    console.log('File details:', { name: file.name, size: file.size, type: file.type });
+    
     const response = await api.post('/documents/upload', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
