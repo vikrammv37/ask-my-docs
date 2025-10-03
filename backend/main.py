@@ -81,7 +81,7 @@ async def debug_all_routes():
     return {"available_routes": routes}
 
 # Direct route registration (simpler, more reliable)
-@app.options("/api/v1/documents/upload")
+@app.options("/documents/upload")
 async def upload_options():
     """Handle CORS preflight for upload endpoint"""
     return Response(
@@ -93,7 +93,7 @@ async def upload_options():
         }
     )
 
-@app.post("/api/v1/documents/upload")
+@app.post("/documents/upload")
 async def upload_document(file: UploadFile = File(...)):
     """Upload and process a document for Q&A"""
     try:
@@ -143,7 +143,7 @@ async def upload_document(file: UploadFile = File(...)):
             detail=f"Failed to process document: {str(e)}"
         )
 
-@app.post("/api/v1/query")
+@app.post("/query")
 async def query_documents(query_request: dict):
     """Query processed documents"""
     try:
