@@ -50,18 +50,39 @@ async def health_check():
 async def debug_routes():
     return {"message": "API routes are working", "available_routes": ["/api/v1/debug", "/api/v1/test", "/api/v1/documents/upload"]}
 
+@app.options("/api/v1/documents/upload")
+async def upload_options():
+    """Handle preflight requests for upload endpoint"""
+    return Response(
+        status_code=200,
+        headers={
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "POST, OPTIONS",
+            "Access-Control-Allow-Headers": "*",
+        }
+    )
+
 @app.post("/api/v1/documents/upload")
-async def upload_document_temp(file: UploadFile = File(...)):
+async def upload_document_temp(request: Request, file: UploadFile = File(...)):
     """Temporary upload endpoint for testing"""
     try:
+        print(f"Received upload request from {request.client}")
+        print(f"File: {file.filename}, Content-Type: {file.content_type}")
+        
+        # Read some content to verify file
+        content = await file.read()
+        await file.seek(0)  # Reset file pointer
+        
         return {
-            "status": "success",
-            "message": "File received successfully",
+            "document_id": f"temp_doc_{file.filename}",
             "filename": file.filename,
-            "content_type": file.content_type,
-            "size": file.size if hasattr(file, 'size') else "unknown"
+            "status": "success",
+            "message": "Document processed successfully (temporary)",
+            "processing_time": 0.1,
+            "content_length": len(content) if content else 0
         }
     except Exception as e:
+        print(f"Upload error: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Upload failed: {str(e)}")
 
 if __name__ == "__main__":
