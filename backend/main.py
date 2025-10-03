@@ -29,7 +29,25 @@ async def root():
 
 @app.get("/health")
 async def health_check():
-    return {"status": "healthy", "version": "1.0.1", "deployment": "latest"}
+    return {"status": "healthy", "version": "1.0.2", "deployment": "debug"}
+
+@app.get("/check-env")
+async def check_environment():
+    """Check environment variables and OpenAI key status"""
+    openai_key = os.environ.get("OPENAI_API_KEY", "")
+    
+    return {
+        "openai_key_set": len(openai_key) > 0,
+        "openai_key_length": len(openai_key),
+        "openai_key_preview": openai_key[:8] + "..." if len(openai_key) > 8 else "NOT SET",
+        "port": os.environ.get("PORT", "NOT SET"),
+        "environment": os.environ.get("ENVIRONMENT", "NOT SET"),
+        "python_path": os.environ.get("PYTHONPATH", "NOT SET")
+    }
+
+@app.get("/test-simple")  
+async def test_simple():
+    return {"message": "Simple endpoint working", "status": "ok"}
 
 @app.get("/api/v1/test-route")
 async def test_route():
