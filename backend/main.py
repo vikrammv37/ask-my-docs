@@ -34,17 +34,6 @@ async def root():
 async def health_check():
     return {"status": "healthy", "version": "1.0.0"}
 
-@app.options("/{full_path:path}")
-async def preflight_handler(request: Request, full_path: str):
-    return Response(
-        status_code=200,
-        headers={
-            "Access-Control-Allow-Origin": "https://askyourdocs.netlify.app",
-            "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-            "Access-Control-Allow-Headers": "*",
-        }
-    )
-
 if __name__ == "__main__":
     import os
     port = int(os.environ.get("PORT", 8000))
