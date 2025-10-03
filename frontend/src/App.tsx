@@ -4,6 +4,8 @@ import { Toaster } from 'react-hot-toast';
 import HomePage from './pages/HomePage';
 import './index.css';
 
+// Force rebuild - API should be working now
+
 const App: React.FC = () => {
   return (
     <Router>
