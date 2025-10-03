@@ -34,6 +34,10 @@ async def root():
 async def health_check():
     return {"status": "healthy", "version": "1.0.0"}
 
+@app.get("/api/v1/debug")
+async def debug_routes():
+    return {"message": "API routes are working", "available_routes": ["/api/v1/debug", "/api/v1/test", "/api/v1/documents/upload"]}
+
 if __name__ == "__main__":
     import os
     port = int(os.environ.get("PORT", 8000))

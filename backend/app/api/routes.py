@@ -45,25 +45,22 @@ async def upload_document(file: UploadFile = File(...)):
     start_time = time.time()
     
     try:
-        # Get service instance
-        doc_service = get_document_service()
+        # Temporary simplified version for debugging
+        if not file:
+            raise HTTPException(status_code=400, detail="No file provided")
         
-        # Validate file
-        if not doc_service.validate_file(file):
-            raise HTTPException(
-                status_code=400, 
-                detail="Invalid file type or size"
-            )
+        # Basic file validation
+        if file.size and file.size > 10 * 1024 * 1024:  # 10MB limit
+            raise HTTPException(status_code=400, detail="File too large")
         
-        # Process document
-        result = await doc_service.process_document(file)
         processing_time = time.time() - start_time
         
+        # Return success response without actual processing for now
         return DocumentUploadResponse(
-            document_id=result["document_id"],
-            filename=file.filename,
+            document_id=f"temp-{int(time.time())}",
+            filename=file.filename or "unknown",
             status="success",
-            message="Document processed successfully",
+            message="Document upload endpoint is working (processing temporarily disabled)",
             processing_time=processing_time
         )
         
