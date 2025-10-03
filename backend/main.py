@@ -31,6 +31,18 @@ async def root():
 async def health_check():
     return {"status": "healthy", "version": "1.0.1", "deployment": "latest"}
 
+@app.get("/api/v1/test-route")
+async def test_route():
+    return {"message": "This route is working!", "timestamp": "2025-03-10"}
+
+@app.get("/debug-routes")
+async def debug_all_routes():
+    routes = []
+    for route in app.routes:
+        if hasattr(route, 'methods') and hasattr(route, 'path'):
+            routes.append({"path": route.path, "methods": list(route.methods)})
+    return {"available_routes": routes}
+
 @app.post("/api/v1/documents/upload")
 async def upload_document(file: UploadFile = File(...)):
     """Upload and process a document for Q&A"""
