@@ -20,8 +20,9 @@ class Settings(BaseSettings):
         "http://localhost:5173",  # Vite dev server
         "http://127.0.0.1:3000",
         "http://127.0.0.1:5173",
-        "https://*.netlify.app",  # Netlify production
-        "https://your-frontend.netlify.app"  # Replace with actual domain
+        "https://askyourdocs.netlify.app",  # Your actual Netlify domain
+        "https://*.netlify.app",  # All Netlify subdomains
+        "https://netlify.app"  # Netlify root domain
     ]
     
     # File Upload
