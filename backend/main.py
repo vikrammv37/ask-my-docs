@@ -54,6 +54,20 @@ async def check_environment():
 async def test_simple():
     return {"message": "Simple endpoint working", "status": "ok"}
 
+@app.get("/test-cors")
+async def test_cors(request: Request):
+    """Test CORS headers are working"""
+    return Response(
+        content='{"message": "CORS test successful"}',
+        media_type="application/json",
+        headers={
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+            "Access-Control-Allow-Headers": "*",
+            "X-Test-Header": "CORS-Working"
+        }
+    )
+
 @app.get("/api/v1/test-route")
 async def test_route():
     return {"message": "This route is working!", "timestamp": "2025-03-10"}
