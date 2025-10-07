@@ -60,12 +60,18 @@ def extract_text_from_pdf(file_content: bytes) -> str:
         pdf_file = io.BytesIO(file_content)
         pdf_reader = PyPDF2.PdfReader(pdf_file)
         text = ""
-        for page in pdf_reader.pages:
-            text += page.extract_text() + "\n"
+        logger.info(f"PDF has {len(pdf_reader.pages)} pages")
+        
+        for i, page in enumerate(pdf_reader.pages):
+            page_text = page.extract_text()
+            logger.info(f"Page {i+1} extracted {len(page_text)} characters")
+            text += page_text + "\n"
+            
+        logger.info(f"Total PDF text extracted: {len(text)} characters")
         return text
     except Exception as e:
         logger.error(f"Error extracting PDF text: {e}")
-        return ""
+        return f"PDF extraction failed: {str(e)}"
 
 def chunk_text(text: str, chunk_size: int = 1000, chunk_overlap: int = 200) -> List[str]:
     """Split text into chunks"""
@@ -228,6 +234,26 @@ async def list_documents():
             "text_length": len(doc_info["content"])
         })
     return {"documents": documents, "total_count": len(documents)}
+
+@app.get("/api/v1/debug/documents")
+async def debug_documents():
+    """Debug endpoint to check document store details"""
+    debug_info = []
+    for doc_id, doc_info in document_store.items():
+        debug_info.append({
+            "document_id": doc_id,
+            "filename": doc_info["filename"],
+            "upload_time": doc_info["upload_time"],
+            "chunk_count": len(doc_info["chunks"]),
+            "text_length": len(doc_info["content"]),
+            "text_preview": doc_info["content"][:500] + "..." if len(doc_info["content"]) > 500 else doc_info["content"],
+            "first_chunk_preview": doc_info["chunks"][0][:200] + "..." if doc_info["chunks"] and len(doc_info["chunks"][0]) > 200 else (doc_info["chunks"][0] if doc_info["chunks"] else "No chunks")
+        })
+    return {
+        "document_store_keys": list(document_store.keys()),
+        "total_documents": len(document_store),
+        "documents_detail": debug_info
+    }
 
 # Direct route registration (simpler, more reliable)
 @app.options("/api/v1/documents/upload")
