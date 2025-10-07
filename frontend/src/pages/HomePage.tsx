@@ -1,11 +1,38 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import FileUpload from '../components/FileUpload';
 import ChatInterface from '../components/ChatInterface';
 import { DocumentTextIcon } from '@heroicons/react/24/outline';
+import { documentService } from '../services/api';
 
 const HomePage: React.FC = () => {
   const [currentDocumentId, setCurrentDocumentId] = useState<string | undefined>();
   const [currentFilename, setCurrentFilename] = useState<string>('');
+
+  // Check for existing documents on component mount
+  useEffect(() => {
+    const checkExistingDocuments = async () => {
+      try {
+        const documents = await documentService.listDocuments();
+        if (documents && documents.length > 0) {
+          // Use the most recent document
+          const latestDoc = documents[0];
+          setCurrentDocumentId(latestDoc.document_id);
+          setCurrentFilename(latestDoc.filename);
+        } else {
+          // Clear any stale frontend state
+          setCurrentDocumentId(undefined);
+          setCurrentFilename('');
+        }
+      } catch (error) {
+        console.error('Failed to check existing documents:', error);
+        // Clear stale state on error
+        setCurrentDocumentId(undefined);
+        setCurrentFilename('');
+      }
+    };
+
+    checkExistingDocuments();
+  }, []);
 
   const handleUploadSuccess = (documentId: string, filename: string) => {
     setCurrentDocumentId(documentId);

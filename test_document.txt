@@ -1,0 +1,12 @@
+This is a test document for the RAG application.
+
+The document contains sample content that can be used to test the document upload and query functionality.
+
+Key points about RAG systems:
+1. RAG stands for Retrieval-Augmented Generation
+2. It combines document retrieval with language generation
+3. Documents are processed and stored as vector embeddings
+4. User queries are matched against these embeddings
+5. Retrieved context is used to generate accurate responses
+
+This test document should help verify that the upload and query features are working correctly.
