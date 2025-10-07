@@ -232,7 +232,7 @@ const SimpleApp: React.FC = () => {
         {/* Footer */}
         <div className="mt-12 text-center text-sm text-gray-500">
           <p>
-            Powered by OpenAI GPT-4 and FastAPI • Built with React and Tailwind CSS
+            Powered by OpenAI GPT-4 and FastAPI • Built with React and Tailwind CSS❤️
           </p>
         </div>
       </div>
