@@ -163,7 +163,13 @@ async def root():
 
 @app.get("/health")
 async def health_check():
-    return {"status": "healthy", "version": "1.0.3", "deployment": "router-fix"}
+    return {
+        "status": "healthy", 
+        "version": "2.0.0", 
+        "deployment": "rag-implemented",
+        "documents_loaded": len(document_store),
+        "langchain_available": LANGCHAIN_AVAILABLE
+    }
 
 @app.get("/check-env")
 async def check_environment():
